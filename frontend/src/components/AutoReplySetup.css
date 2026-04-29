@@ -1,0 +1,279 @@
+.setup-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.setup-container h2 {
+  color: #333;
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+.setup-subtitle {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.setup-error,
+.setup-success {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.setup-error {
+  background: #ffe0e0;
+  color: #c41e3a;
+  border-left: 4px solid #c41e3a;
+}
+
+.setup-error button {
+  background: none;
+  border: none;
+  color: #c41e3a;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.setup-success {
+  background: #d4edda;
+  color: #155724;
+  border-left: 4px solid #28a745;
+  animation: slideDown 0.3s ease-out;
+}
+
+.setup-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.setup-form-section h3,
+.templates-section h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-hint {
+  display: block;
+  margin-top: 0.3rem;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.form-group.checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.form-group.checkbox label {
+  margin: 0;
+  cursor: pointer;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.templates-section h3 {
+  margin-top: 0;
+}
+
+.templates-subtitle {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.templates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.template-card {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.template-card:hover {
+  border-color: #667eea;
+  background: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.template-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.template-card p {
+  margin: 0 0 0.75rem 0;
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.use-template-btn {
+  padding: 0.4rem 0.8rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.use-template-btn:hover {
+  background: #764ba2;
+}
+
+.tips-section {
+  background: #f0f4ff;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.tips-section h4 {
+  margin-top: 0;
+  color: #333;
+}
+
+.tips-section ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.tips-section li {
+  margin: 0.5rem 0;
+}
+
+.setup-info {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #667eea;
+}
+
+.setup-info h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.setup-info ol {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #555;
+}
+
+.setup-info li {
+  margin: 0.75rem 0;
+}
+
+.setup-info strong {
+  color: #333;
+}
+
+.api-info {
+  background: #fff3cd;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid #ffc107;
+}
+
+.api-info h4 {
+  margin-top: 0;
+  color: #333;
+}
+
+.api-info p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.warning {
+  color: #c41e3a;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .setup-layout {
+    grid-template-columns: 1fr;
+  }
+}
