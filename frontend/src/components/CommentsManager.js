@@ -79,6 +79,7 @@ const CommentsManager = () => {
       setLoading(true);
       const response = await axios.post(`${API_BASE_URL}/api/comments/${commentId}/reply`, {
         message: replyText,
+        username: comments.find(comment => comment.id === commentId)?.from?.username || null,
       });
 
       if (response.data.success) {
@@ -113,6 +114,39 @@ const CommentsManager = () => {
       } finally {
         setLoading(false);
       }
+    }
+  };
+
+  const handleLikeAllComments = async () => {
+    if (!selectedMediaId) return;
+    if (!window.confirm('Like all comments on this post?')) return;
+    try {
+      setLoading(true);
+      const response = await axios.post(`${API_BASE_URL}/api/comments/${selectedMediaId}/like-all`);
+      if (response.data && response.data.success) {
+        const { liked = 0, failed = 0, results = [] } = response.data;
+        const failedItems = (results || []).filter(r => !r.success);
+        if (failedItems.length > 0) {
+          // Show concise summary and log details
+          const summary = `Liked ${liked} comments, failed ${failedItems.length}`;
+          console.error('Like-all failures:', failedItems);
+          alert(summary + '\nSee console for failure details');
+          setError(`Like-all: ${failedItems.length} failures (see console)`);
+        } else {
+          alert(`Liked ${liked} comments, failed ${failed}`);
+        }
+      } else {
+        const errMsg = response.data?.error || 'Failed to like comments';
+        setError(errMsg);
+        console.error('Like-all response error:', response.data);
+      }
+    } catch (err) {
+      console.error('Like-all error:', err);
+      const message = err.response?.data?.error || err.message || 'Failed to like comments';
+      setError(message);
+    } finally {
+      setLoading(false);
+      if (selectedMediaId) await fetchComments(selectedMediaId);
     }
   };
 
@@ -157,6 +191,17 @@ const CommentsManager = () => {
           <h3>
             {selectedMediaId ? 'Comments' : 'Select a post to view comments'}
           </h3>
+          {selectedMediaId && (
+            <div className="comments-actions">
+              <button
+                className="like-all-btn"
+                onClick={handleLikeAllComments}
+                disabled={loading || comments.length === 0}
+              >
+                👍 Like All Comments
+              </button>
+            </div>
+          )}
           {selectedMediaId && autoReplyStatus && (
             <div className="auto-reply-info">
               <p className="auto-reply-indicator">

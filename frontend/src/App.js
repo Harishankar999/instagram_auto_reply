@@ -5,10 +5,10 @@ import CommentsManager from './components/CommentsManager';
 import AutoReplySetup from './components/AutoReplySetup';
 import PostsManager from './components/PostsManager';
 import AiAutoReply from './components/AiAutoReply';
+import UnrepliedMessages from './components/UnrepliedMessages';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [aiConnected, setAiConnected] = useState(false);
 
@@ -84,12 +84,19 @@ function App() {
         >
           AI Replies {aiConnected ? '🟢' : '🔴'}
         </button>
+        <button
+          className={`nav-btn ${currentPage === 'unreplied' ? 'active' : ''}`}
+          onClick={() => handleNavigation('unreplied')}
+        >
+          Unreplied Inbox
+        </button>
       </nav>
 
       <main className="app-main">
         {currentPage === 'dashboard' && <Dashboard />}
         {currentPage === 'posts' && <PostsManager />}
         {currentPage === 'ai' && <AiAutoReply />}
+        {currentPage === 'unreplied' && <UnrepliedMessages aiConnected={aiConnected} />}
         {currentPage === 'comments' && <CommentsManager />}
         {currentPage === 'setup' && <AutoReplySetup />}
       </main>

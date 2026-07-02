@@ -67,9 +67,13 @@ const AiAutoReply = () => {
   const sendManualReply = async (commentId) => {
     const msg = manualReplies[commentId];
     if (!msg || !msg.trim()) return;
+    const sourceComment = (results?.skipped || []).find(c => c.id === commentId);
     try {
       setLoading(true);
-      const res = await axios.post(`${API_BASE_URL}/api/comments/${commentId}/reply`, { message: msg });
+      const res = await axios.post(`${API_BASE_URL}/api/comments/${commentId}/reply`, {
+        message: msg,
+        username: sourceComment?.from?.username || null,
+      });
       if (res.data.success) {
         alert('Manual reply sent');
         // remove from skipped list
@@ -97,7 +101,7 @@ const AiAutoReply = () => {
       <p>
         Gemini status: {aiConnected ? <span style={{color:'green'}}>connected</span> : <span style={{color:'red'}}>not configured</span>}
       </p>
-      <p>Select a post to let Gemini generate polite short replies (&lt;= 5 words). Longer comments will be listed below for you to answer.</p>
+      <p>Select a post to generate human-like replies. Long comments are highlighted and left for admin follow-up.</p>
 
       {error && (
         <div className="ai-error">
@@ -130,9 +134,12 @@ const AiAutoReply = () => {
             <>
               <div className="ai-section">
                 <h4>Replied ({results.replied.length})</h4>
-                <ul>
+                <ul className="ai-replied-list">
                   {results.replied.map(r => (
-                    <li key={r.commentId}>{r.reply}</li>
+                    <li key={r.commentId} className="ai-replied-item">
+                      <div className="ai-original"><strong>@{r.from || 'unknown'}</strong>: {r.originalText}</div>
+                      <div className={`ai-reply ${r.devotional ? 'devotional' : ''}`}><strong>Reply:</strong> {r.reply}</div>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -140,7 +147,10 @@ const AiAutoReply = () => {
               <div className="ai-section">
                 <h4>Manual follow‑ups ({results.skipped.length})</h4>
                 {results.skipped.map(c => (
-                  <div key={c.id} className="ai-skipped-item">
+                  <div
+                    key={c.id}
+                    className={`ai-skipped-item ${c.reason?.includes('needs admin') ? 'admin-escalation' : ''}`}
+                  >
                     <strong>@{c.from?.username}</strong>: {c.text}
                     {c.reason && <p className="skip-reason">(skipped: {c.reason})</p>}
                     <textarea
