@@ -76,9 +76,9 @@ app.get('/api/comments/:mediaId', async (req, res) => {
 });
 
 
-// status endpoint for Gemini connectivity
+// status endpoint for AI connectivity (Mesh API)
 app.get('/api/ai-status', (req, res) => {
-  const connected = !!process.env.GEMINI_API_KEY;
+  const connected = !!process.env.MESH_API_KEY;
   res.status(200).json({ success: true, connected });
 });
 
@@ -641,12 +641,12 @@ function getFunnyReply(commentText) {
   return ensureEmoji('Ha ha', trimmed);
 }
 
-// helper to call Google Gemini for a polite reply
+// helper to call Mesh API (Google Gemini model) for a polite reply
 async function generateAiReply(commentText, mediaCaption, instruction = '') {
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.MESH_API_KEY;
     if (!apiKey) {
-      throw new Error('Gemini API key not configured');
+      throw new Error('Mesh API key not configured');
     }
     const trimmedComment = (commentText || '').trim();
     if (!trimmedComment) {
@@ -681,11 +681,11 @@ async function generateAiReply(commentText, mediaCaption, instruction = '') {
       `Comment: "${trimmedComment}"`,
     ].filter(Boolean).join('\n');
 
-    // gemini-2.5-flash with v1beta is the primary working configuration (using thinkingBudget: 0 to return results immediately)
+    // gemini models via Mesh API
     const modelConfigs = [
-      { name: 'gemini-2.5-flash', version: 'v1beta', config: { temperature: 0.7, maxOutputTokens: 200, thinkingConfig: { thinkingBudget: 0 } } },
-      { name: 'gemini-2.0-flash', version: 'v1beta', config: { temperature: 0.7, maxOutputTokens: 200 } },
-      { name: 'gemini-1.5-flash', version: 'v1', config: { temperature: 0.7, maxOutputTokens: 200 } }
+      { name: 'google/gemini-3.5-flash' },
+      { name: 'google/gemini-2.5-flash' },
+      { name: 'google/gemini-2.5-flash-lite' }
     ];
 
     let lastError = null;
@@ -693,29 +693,29 @@ async function generateAiReply(commentText, mediaCaption, instruction = '') {
     for (const mc of modelConfigs) {
       try {
         const response = await axios.post(
-          `https://generativelanguage.googleapis.com/${mc.version}/models/${mc.name}:generateContent`,
+          'https://api.meshapi.ai/v1/chat/completions',
           {
-            contents: [
+            model: mc.name,
+            messages: [
               {
-                parts: [{ text: prompt }],
+                role: 'user',
+                content: prompt,
               },
             ],
-            generationConfig: mc.config,
+            temperature: 0.7,
+            max_tokens: 200,
           },
           {
-            params: {
-              key: apiKey,
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
             },
             timeout: 20000,
           }
         );
 
-        // Extract text from Gemini generateContent response.
-        const parts = response.data?.candidates?.[0]?.content?.parts || [];
-        const text = parts
-          .map((p) => p?.text || '')
-          .join(' ')
-          .trim();
+        // Extract text from OpenAI-compatible chat completions response.
+        const text = response.data?.choices?.[0]?.message?.content?.trim();
 
         if (text) {
           if (isEmojiOnlyText(trimmedComment)) return trimmedComment;
@@ -727,12 +727,12 @@ async function generateAiReply(commentText, mediaCaption, instruction = '') {
     }
 
     if (lastError) {
-      console.error('Gemini model error:', lastError.response?.data || lastError.message);
+      console.error('Mesh API model error:', lastError.response?.data || lastError.message);
     } else {
-      console.log('[Gemini] no text returned; using fallback.');
+      console.log('[Mesh API] no text returned; using fallback.');
     }
 
-    // Rule-based fallbacks if Gemini API is exhausted/fails
+    // Rule-based fallbacks if Mesh API is exhausted/fails
     const echoed = getDevotionalEcho(trimmedComment);
     if (echoed) return echoed;
     if (captionTone === 'funny' || isFunnyComment(trimmedComment, mediaCaption)) {
@@ -740,7 +740,7 @@ async function generateAiReply(commentText, mediaCaption, instruction = '') {
     }
     return ensureEmoji('Thank you so much!', trimmedComment);
   } catch (err) {
-    console.error('Gemini error:', err.response?.data || err.message);
+    console.error('Mesh API error:', err.response?.data || err.message);
     // Safe fallbacks on ultimate error
     const echoed = getDevotionalEcho(commentText);
     if (echoed) return echoed;

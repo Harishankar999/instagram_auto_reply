@@ -72,7 +72,7 @@ function App() {
         >
           Comments
         </button>
-        <button
+        {/* <button
           className={`nav-btn ${currentPage === 'setup' ? 'active' : ''}`}
           onClick={() => handleNavigation('setup')}
         >
@@ -83,12 +83,12 @@ function App() {
           onClick={() => handleNavigation('ai')}
         >
           AI Replies {aiConnected ? '🟢' : '🔴'}
-        </button>
+        </button> */}
         <button
           className={`nav-btn ${currentPage === 'unreplied' ? 'active' : ''}`}
           onClick={() => handleNavigation('unreplied')}
         >
-          Unreplied Inbox
+          Unreplied Inbox {aiConnected ? '🟢' : '🔴'}
         </button>
       </nav>
 
